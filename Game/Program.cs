@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -13,16 +14,43 @@ namespace Game
     {
         static void Main(string[] args)
         {
+            int x = 3; int y = 3;
+            try
+            {
+                Console.WriteLine("Введите ширину поля");
+                x = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("Введите высоту поля");
+                y = Convert.ToInt32(Console.ReadLine());
+            }
+            catch
+            {
+                Console.WriteLine("Неверный ввод");
+                Console.WriteLine("пока");
+                Console.Read();
+                return;
+            }
 
-            StartGame();
+            while (true)
+            {
+               
 
+                StartGame( x , y);
+                Console.WriteLine("Продолжить  дальше? * для выхода ");
+
+                if (Console.ReadLine()=="*")
+                {
+                    break;
+                }
+            }
+            Console.WriteLine("пока");
+            
             Console.Read();
         }
 
         /// <summary>
         /// Запуск  игры
         /// </summary>
-        private static void StartGame()
+        private static void StartGame(int x , int  y)
         {
             Console.WriteLine("Игра крестики  нолики \"СГК\" ");
 
@@ -30,8 +58,9 @@ namespace Game
 
             string message = ""; // сообщение  о  победе или    нечье 
 
-            int[,] mas = new int[3, 3]; //  если  0 - пусто  если 1 - крестик  - если 2 нолик 
-          
+            int[,] mas = new int[x, y]; //  если  0 - пусто  если 1 - крестик  - если 2 нолик 
+
+            PrintBord(mas); // отпечать  доску 
             while (true)
             {
                 if ( IsWin(mas, out message ) ) // если победа
@@ -39,8 +68,7 @@ namespace Game
                     Console.WriteLine("Игра окончена" + " " +  message);
                     break;
                 }
-
-                PrintBord(mas); // отпечать  доску 
+               
                 mas = NextTurn(mas, gamer); // совершили  ход 
                 PrintBord(mas); // отпечать  доску занова 
                 gamer = !gamer;
@@ -199,14 +227,17 @@ namespace Game
                 return true;
             }
 
-            if (DiagonalWin(mas, out message))
+            if (mas.GetLength(0) == mas.GetLength(1))
             {
-                return true;
-            }
+                if (DiagonalWin(mas, out message))
+                {
+                    return true;
+                }
 
-            if (DiagonalWinRevers(mas, out message))
-            {
-                return true;
+                if (DiagonalWinRevers(mas, out message))
+                {
+                    return true;
+                }
             }
 
             if ( DrawGame(mas, out message))
@@ -320,12 +351,12 @@ namespace Game
         private static bool ColumWin(int[,] mas, out string message)
         {
             message = "";
-            for (int i = 0; i < mas.GetLength(0); i++)
+            for (int i = 0; i < mas.GetLength(1); i++)
             {
                 int sum = 0;
                 bool flag = true;
 
-                for (int j = 0; j < mas.GetLength(1); j++)
+                for (int j = 0; j < mas.GetLength(0); j++)
                 {
                     if (mas[j, i] != 0)
                     {
